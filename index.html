@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="referrer" content="no-referrer" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; upgrade-insecure-requests" />
+  <title>本地 2FA 验证器</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="card" aria-labelledby="title">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">2F</div>
+        <div>
+          <h1 id="title">本地 2FA 验证器</h1>
+          <p>验证码只在当前浏览器中计算，不上传、不保存。</p>
+        </div>
+      </div>
+
+      <form id="totp-form" autocomplete="off" novalidate>
+        <label for="secret">2FA Secret / otpauth URI</label>
+        <div class="secret-row">
+          <input
+            id="secret"
+            name="secret"
+            type="password"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
+            placeholder="例如：JBSWY3DPEHPK3PXP"
+            aria-describedby="secret-help"
+          />
+          <button id="toggle-secret" class="secondary compact" type="button" aria-label="显示密钥">显示</button>
+        </div>
+        <p id="secret-help" class="help">支持 Base32 Secret，也支持标准 otpauth://totp/... 链接。</p>
+
+        <button class="primary" type="submit">生成验证码</button>
+      </form>
+
+      <section id="result" class="result hidden" aria-live="polite">
+        <div class="result-head">
+          <div>
+            <div id="account-label" class="account-label">TOTP</div>
+            <div id="issuer-label" class="issuer-label"></div>
+          </div>
+          <button id="clear-btn" class="link-btn" type="button">清除</button>
+        </div>
+
+        <button id="copy-code" class="code-button" type="button" title="点击复制验证码">
+          <span id="code" class="code">------</span>
+          <span class="copy-hint">点击复制</span>
+        </button>
+
+        <div class="timer" aria-label="验证码剩余时间">
+          <div class="timer-track"><div id="timer-bar" class="timer-bar"></div></div>
+          <div class="timer-meta">
+            <span id="remaining">30 秒</span>
+            <span>每 30 秒刷新</span>
+          </div>
+        </div>
+      </section>
+
+      <div id="message" class="message hidden" role="status"></div>
+
+      <details class="security">
+        <summary>安全说明</summary>
+        <ul>
+          <li>本页面不包含后端接口，CSP 禁止任何网络连接。</li>
+          <li>Secret 不写入 localStorage、sessionStorage、Cookie 或 URL。</li>
+          <li>刷新或离开页面后，Secret 会从页面状态中清除。</li>
+          <li>验证码依赖设备时间；若验证码不对，请先校准系统时间。</li>
+        </ul>
+      </details>
+    </section>
+
+    <footer>Local-only TOTP · RFC 6238</footer>
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
